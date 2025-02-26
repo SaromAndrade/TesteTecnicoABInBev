@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -28,7 +29,6 @@ public class Program
 
             builder.AddBasicHealthChecks();
             builder.Services.AddSwaggerGen();
-
             builder.Services.AddDbContext<DefaultContext>(options =>
                 options.UseNpgsql(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -60,7 +60,19 @@ public class Program
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<DefaultContext>();
+                    context.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    Log.Fatal(ex, "An error occurred when applying the migrations.");
+                }
+            }
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
