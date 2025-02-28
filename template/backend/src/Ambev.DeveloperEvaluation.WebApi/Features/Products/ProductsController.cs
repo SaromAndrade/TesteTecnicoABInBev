@@ -1,14 +1,18 @@
 ﻿using Ambev.DeveloperEvaluation.Application.DTOs;
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetAllCategory;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetProductsByCategory;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllCategory;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductsByCategory;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using AutoMapper;
 using FluentValidation;
@@ -129,6 +133,38 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             var result = await _mediator.Send(command, cancellationToken);
 
             return Ok<string>(result);
+        }
+        [HttpGet("categories")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetAllCategorytResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllCategory(CancellationToken cancellationToken)
+        {
+            var query = new GetAllCategoryQuery();
+            var result = await _mediator.Send(query, cancellationToken);
+            var response = _mapper.Map<GetAllCategorytResponse>(result);
+
+            return Ok<GetAllCategorytResponse>(response);
+        }
+        [HttpGet("category/{category}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetAllProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllProductsByCategory(string category, [FromQuery] int page, [FromQuery] int size, [FromQuery] string order, CancellationToken cancellationToken)
+        {
+            var request = new GetProductsByCategoryRequest { Category = category, Page =  page, Size = size, Order = order };
+
+            var validator = new GetProductsByCategoryRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var query = _mapper.Map<GetProductsByCategoryQuery>(request);
+            var result = await _mediator.Send(query, cancellationToken);
+            var response = _mapper.Map<GetProductsByCategoryResponse>(result);
+
+            var pagedList = new PaginatedList<ProductDto>(response.Data, response.Data.Count, page, size);
+
+            return OkPaginated<ProductDto>(pagedList);
         }
     }
 }

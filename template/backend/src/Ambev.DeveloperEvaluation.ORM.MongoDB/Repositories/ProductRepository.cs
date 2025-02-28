@@ -156,15 +156,61 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
             return false;
         }
         /// <summary>
-        /// Retrieves products by category.
+        /// Retrieves a paginated list of products filtered by category.
         /// </summary>
         /// <param name="category">The category to filter products by.</param>
+        /// <param name="page">The page number (default is 1).</param>
+        /// <param name="size">The number of items per page (default is 10).</param>
+        /// <param name="order">Sorting order (optional).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>A list of products in the specified category.</returns>
-        public async Task<List<Product>> GetByCategoryAsync(string category, CancellationToken cancellationToken = default)
+        /// <returns>A paginated list of products in the specified category.</returns>
+        public async Task<(List<Product> Products, int TotalItems)> GetByCategoryAsync(string category, int page = 1, int size = 10, string order = "", CancellationToken cancellationToken = default)
+        {
+            var query = _context.Products.Where(p => p.Category == category);
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                var orderParams = order.Split(',');
+                foreach (var param in orderParams)
+                {
+                    var orderBy = param.Trim().Split(' ');
+                    var property = orderBy[0];
+                    var direction = orderBy.Length > 1 ? orderBy[1] : "asc";
+
+                    switch (property.ToLower())
+                    {
+                        case "title":
+                            query = direction.ToLower() == "desc"
+                                ? query.OrderByDescending(p => p.Title)
+                                : query.OrderBy(p => p.Title);
+                            break;
+                        case "price":
+                            query = direction.ToLower() == "desc"
+                                ? query.OrderByDescending(p => p.Price)
+                                : query.OrderBy(p => p.Price);
+                            break;
+                        default:
+                            throw new ArgumentException($"Invalid order property: {property}");
+                    }
+                }
+            }
+
+            int totalItems = await query.CountAsync(cancellationToken);
+            var products = await query.Skip((page - 1) * size).Take(size).ToListAsync(cancellationToken);
+
+            return (products, totalItems);
+        }
+
+        /// <summary>
+        /// Retrieves a list of unique product categories.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A list of distinct product categories.</returns>
+        public async Task<List<string>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Products
-                .Where(p => p.Category == category)
+                .Select(p => p.Category)
+                .Distinct()
                 .ToListAsync(cancellationToken);
         }
         private async Task<int> GetNextSequenceValueAsync(string sequenceName, CancellationToken cancellationToken)

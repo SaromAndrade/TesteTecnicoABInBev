@@ -53,6 +53,12 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="category">The category to filter products by.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A list of products in the specified category.</returns>
-        Task<List<Product>> GetByCategoryAsync(string category, CancellationToken cancellationToken);
+        Task<(List<Product> Products, int TotalItems)> GetByCategoryAsync(string category, int page, int size, string order, CancellationToken cancellationToken);
+        /// <summary>
+        /// Retrieves a list of unique product categories.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A list of distinct product categories.</returns>
+        Task<List<string>> GetAllCategoriesAsync(CancellationToken cancellationToken);
     }
 }
