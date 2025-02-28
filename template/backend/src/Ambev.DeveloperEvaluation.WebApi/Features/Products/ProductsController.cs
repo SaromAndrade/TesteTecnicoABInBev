@@ -2,10 +2,12 @@
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -95,6 +97,33 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
 
             // Retorna os dados paginados
             return Created(string.Empty, new ApiResponseWithData<GetProductResponse>
+            {
+                Success = true,
+                Message = "User created successfully",
+                Data = response
+            });
+        }
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<UpdateProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid product ID.");
+
+            var validator = new UpdateProductRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<UpdateProductCommand>(request);
+            command.Id = id;
+            var result = await _mediator.Send(command, cancellationToken);
+            var response = _mapper.Map<UpdateProductResponse>(result);
+
+            // Retorna os dados paginados
+            return Ok(new ApiResponseWithData<UpdateProductResponse>
             {
                 Success = true,
                 Message = "User created successfully",

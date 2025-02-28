@@ -56,7 +56,7 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
         public async Task<(List<Product> Products, int TotalItems)> GetAllAsync(int page = 1, int size = 10, string order = "", CancellationToken cancellationToken = default)
         {
             var query = _context.Products.AsQueryable();
-            
+
             if (!string.IsNullOrEmpty(order))
             {
                 var orderParams = order.Split(',');
@@ -101,11 +101,22 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
         /// <param name="product">The updated product data.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task UpdateAsync(string id, Product product, CancellationToken cancellationToken = default)
+        public async Task<Product> UpdateAsync(int id, Product product, CancellationToken cancellationToken = default)
         {
-            var existingProduct = await _context.Products.FindAsync(new object[] { id }, cancellationToken);
-            if (existingProduct != null)
+            if (id <= 0)
+                throw new ArgumentException("Product ID must be greater than zero.", nameof(id));
+
+            if (product == null)
+                throw new ArgumentNullException(nameof(product), "Product data cannot be null.");
+
+            try
             {
+                var existingProduct = await _context.Products.FindAsync(new object[] { id }, cancellationToken);
+
+                if (existingProduct == null)
+                    throw new KeyNotFoundException($"Product with ID {id} not found.");
+
+                // Update product fields
                 existingProduct.Title = product.Title;
                 existingProduct.Price = product.Price;
                 existingProduct.Description = product.Description;
@@ -115,6 +126,16 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
 
                 _context.Products.Update(existingProduct);
                 await _context.SaveChangesAsync(cancellationToken);
+
+                return existingProduct;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception("An error occurred while updating the product in the database.", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred while updating the product.", ex);
             }
         }
         /// <summary>
@@ -123,7 +144,7 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
         /// <param name="id">The ID of the product to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task DeleteAsync(string id, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FindAsync(new object[] { id }, cancellationToken);
             if (product != null)

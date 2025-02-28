@@ -1,9 +1,15 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+﻿using Ambev.DeveloperEvaluation.Application.DTOs;
+using MediatR;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct
+namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
 {
-    public class CreateProductRequest
+    public class UpdateProductCommand : IRequest<UpdateProductResult>
     {
+        /// <summary>
+        /// The ID of the created product.
+        /// </summary>
+        public int Id { get; set; }
+
         /// <summary>
         /// Title of the product.
         /// </summary>
@@ -32,6 +38,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct
         /// <summary>
         /// Rating of the product.
         /// </summary>
-        public Rating Rating { get; set; }
+        public RatingDto Rating { get; set; }
     }
 }

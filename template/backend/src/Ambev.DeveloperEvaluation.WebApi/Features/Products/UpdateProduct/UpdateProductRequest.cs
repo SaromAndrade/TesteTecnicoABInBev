@@ -1,8 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct
 {
-    public class CreateProductRequest
+    public class UpdateProductRequest
     {
         /// <summary>
         /// Title of the product.

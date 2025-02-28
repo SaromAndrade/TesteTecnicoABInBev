@@ -39,14 +39,14 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="product">The updated product data.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateAsync(string id, Product product, CancellationToken cancellationToken);
+        Task<Product> UpdateAsync(int id, Product product, CancellationToken cancellationToken);
         /// <summary>
         /// Deletes a product by its ID.
         /// </summary>
         /// <param name="id">The ID of the product to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task DeleteAsync(string id, CancellationToken cancellationToken);
+        Task DeleteAsync(int id, CancellationToken cancellationToken);
         /// <summary>
         /// Retrieves products by category.
         /// </summary>
