@@ -46,7 +46,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="id">The ID of the product to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task DeleteAsync(int id, CancellationToken cancellationToken);
+        Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
         /// <summary>
         /// Retrieves products by category.
         /// </summary>

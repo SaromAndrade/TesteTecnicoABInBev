@@ -144,14 +144,16 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
         /// <param name="id">The ID of the product to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products.FindAsync(new object[] { id }, cancellationToken);
             if (product != null)
             {
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync(cancellationToken);
+                return true;
             }
+            return false;
         }
         /// <summary>
         /// Retrieves products by category.

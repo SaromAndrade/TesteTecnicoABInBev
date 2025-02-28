@@ -1,10 +1,12 @@
 ﻿using Ambev.DeveloperEvaluation.Application.DTOs;
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
@@ -13,6 +15,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
 {
@@ -28,7 +31,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             _mediator = mediator;
             _mapper = mapper;
         }
-
 
         /// <summary>
         /// Creates a new user
@@ -48,14 +50,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
                 return BadRequest(validationResult.Errors);
 
             var command = _mapper.Map<CreateProductCommand>(request);
-            var response = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
+            var response = _mapper.Map<CreateProductResponse>(result);
 
-            return Created(string.Empty, new ApiResponseWithData<CreateProductResponse>
-            {
-                Success = true,
-                Message = "User created successfully",
-                Data = _mapper.Map<CreateProductResponse>(response)
-            });
+            return Ok<CreateProductResponse>(response);
         }
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponseWithData<GetAllProductResponse>), StatusCodes.Status200OK)]
@@ -66,17 +64,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             var result = await _mediator.Send(query, cancellationToken);
             var response = _mapper.Map<GetAllProductResponse>(result);
 
-            var pagedList = new PaginatedList<ProductDto>(response.Data, response.TotalItems, response.CurrentPage, size);
+            var pagedList = new PaginatedList<ProductDto>(response.Data, response.Data.Count, page, size);
 
-            // Retorna os dados paginados
-            return Ok(new PaginatedResponse<ProductDto>
-            {
-                Data = pagedList,
-                CurrentPage = pagedList.CurrentPage,
-                TotalPages = pagedList.TotalPages,
-                TotalCount = pagedList.TotalCount,
-                Success = true
-            });
+            return OkPaginated<ProductDto>(pagedList);
         }
 
         [HttpGet("{id}")]
@@ -84,24 +74,19 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetProduct([FromRoute] int id, CancellationToken cancellationToken)
         {
-            var validator = new GetProductQueryValidator();
-            var validationResult = await validator.ValidateAsync(new GetProductQuery { Id = id }, cancellationToken);
+            var request = new GetProductRequest { Id = id };
+            var validator = new GetProductRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);
 
-            var query = new GetProductQuery { Id = id };
+            var query = _mapper.Map<GetProductQuery>(request);
 
             var result = await _mediator.Send(query, cancellationToken);
             var response = _mapper.Map<GetProductResponse>(result);
 
-            // Retorna os dados paginados
-            return Created(string.Empty, new ApiResponseWithData<GetProductResponse>
-            {
-                Success = true,
-                Message = "User created successfully",
-                Data = response
-            });
+            return Ok<GetProductResponse>(response);
         }
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(ApiResponseWithData<UpdateProductResponse>), StatusCodes.Status200OK)]
@@ -129,6 +114,21 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
                 Message = "User created successfully",
                 Data = response
             });
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id, CancellationToken cancellationToken)
+        {
+            var request = new DeleteProductRequest { Id = id };
+            var validator = new DeleteProductRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<DeleteProductCommand>(request);
+            var result = await _mediator.Send(command, cancellationToken);
+
+            return Ok<string>(result);
         }
     }
 }
