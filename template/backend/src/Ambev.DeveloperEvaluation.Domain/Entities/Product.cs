@@ -6,8 +6,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
     public class Product
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        [BsonRepresentation(BsonType.Int32)]
+        public int Id { get; set; }
         [BsonElement("title")]
         public string Title { get; set; }
 

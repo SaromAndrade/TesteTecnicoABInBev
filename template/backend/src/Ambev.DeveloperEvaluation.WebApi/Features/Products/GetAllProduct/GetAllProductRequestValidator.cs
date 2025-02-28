@@ -1,6 +1,8 @@
-﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct
+﻿using FluentValidation;
+
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct
 {
-    public class GetAllProductRequestValidator
+    public class GetAllProductRequestValidator : AbstractValidator<GetAllProductRequest>
     {
     }
 }

@@ -1,6 +1,13 @@
-﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct
+﻿using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
+using AutoMapper;
+
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct
 {
-    public class GetAllProductProfile
+    public class GetAllProductProfile : Profile
     {
+        public GetAllProductProfile()
+        {
+            CreateMap<GetAllProductResult, GetAllProductResponse>();
+        }
     }
 }

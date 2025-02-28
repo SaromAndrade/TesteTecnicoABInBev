@@ -1,6 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using MongoDB.Driver.Linq;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
 {
@@ -28,6 +30,7 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task<Product?> CreateAsync(Product product, CancellationToken cancellationToken = default)
         {
+            product.Id = await GetNextSequenceValueAsync("productid", cancellationToken);
             await _context.Products.AddAsync(product, cancellationToken);
             await _context.SaveChangesAsync();
             return product;
@@ -43,13 +46,53 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
             return await _context.Products.FindAsync(new object[] { id }, cancellationToken);
         }
         /// <summary>
-        /// Retrieves all products from the database.
+        /// Retrieves a paginated list of products from the database.
         /// </summary>
+        /// <param name="page">The page number (default is 1).</param>
+        /// <param name="size">The number of items per page (default is 10).</param>
+        /// <param name="order">Sorting order (optional).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>A list of all products.</returns>
-        public async Task<List<Product>> GetAllAsync(CancellationToken cancellationToken = default)
+        /// <returns>A paginated list of products.</returns>
+        public async Task<(List<Product> Products, int TotalItems)> GetAllAsync(int page = 1, int size = 10, string order = "", CancellationToken cancellationToken = default)
         {
-            return await _context.Products.ToListAsync(cancellationToken);
+            var query = _context.Products.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(order))
+            {
+                var orderParams = order.Split(',');
+                foreach (var param in orderParams)
+                {
+                    var orderBy = param.Trim().Split(' ');
+                    var property = orderBy[0];
+                    var direction = orderBy.Length > 1 ? orderBy[1] : "asc";
+
+                    switch (property.ToLower())
+                    {
+                        case "title":
+                            query = direction.ToLower() == "desc"
+                                ? query.OrderByDescending(p => p.Title)
+                                : query.OrderBy(p => p.Title);
+                            break;
+                        case "price":
+                            query = direction.ToLower() == "desc"
+                                ? query.OrderByDescending(p => p.Price)
+                                : query.OrderBy(p => p.Price);
+                            break;
+                        case "category":
+                            query = direction.ToLower() == "desc"
+                                ? query.OrderByDescending(p => p.Category)
+                                : query.OrderBy(p => p.Category);
+                            break;
+                        // Adicione mais casos para outras propriedades, se necessário
+                        default:
+                            throw new ArgumentException($"Invalid order property: {property}");
+                    }
+                }
+            }
+            int totalItems = await _context.Products.CountAsync(cancellationToken);
+            var products = await query.Skip((page - 1) * size).Take(size).ToListAsync(cancellationToken);
+
+            return (products, totalItems);
         }
         /// <summary>
         /// Updates an existing product in the database.
@@ -100,6 +143,22 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
             return await _context.Products
                 .Where(p => p.Category == category)
                 .ToListAsync(cancellationToken);
+        }
+        private async Task<int> GetNextSequenceValueAsync(string sequenceName, CancellationToken cancellationToken)
+        {
+            var counterCollection = _context.GetCounterCollection();
+
+            var filter = Builders<Counter>.Filter.Eq(c => c.Id, sequenceName);
+            var update = Builders<Counter>.Update.Inc(c => c.SequenceValue, 1);
+
+            var options = new FindOneAndUpdateOptions<Counter>
+            {
+                ReturnDocument = ReturnDocument.After,
+                IsUpsert = true
+            };
+
+            var counter = await counterCollection.FindOneAndUpdateAsync(filter, update, options, cancellationToken);
+            return counter.SequenceValue;
         }
     }
 }

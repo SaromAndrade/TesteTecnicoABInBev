@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ambev.DeveloperEvaluation.Application.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
         /// <summary>
         /// The ID of the created product.
         /// </summary>
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Title of the product.
@@ -44,21 +45,6 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
         /// <summary>
         /// Rating of the product.
         /// </summary>
-        public RatingResult Rating { get; set; }
-    }
-    /// <summary>
-    /// Represents the rating of a product in the response.
-    /// </summary>
-    public class RatingResult
-    {
-        /// <summary>
-        /// Rate of the product.
-        /// </summary>
-        public double Rate { get; set; }
-
-        /// <summary>
-        /// Count of ratings.
-        /// </summary>
-        public int Count { get; set; }
+        public RatingDto Rating { get; set; }
     }
 }

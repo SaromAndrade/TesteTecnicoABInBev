@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Ambev.DeveloperEvaluation.Application.DTOs;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,20 +43,5 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
         /// Rating of the product.
         /// </summary>
         public RatingDto Rating { get; set; }
-    }
-    /// <summary>
-    /// Represents the rating of a product.
-    /// </summary>
-    public class RatingDto
-    {
-        /// <summary>
-        /// Rate of the product.
-        /// </summary>
-        public double Rate { get; set; }
-
-        /// <summary>
-        /// Count of ratings.
-        /// </summary>
-        public int Count { get; set; }
     }
 }

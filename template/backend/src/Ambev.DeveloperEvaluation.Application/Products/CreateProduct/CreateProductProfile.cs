@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+﻿using Ambev.DeveloperEvaluation.Application.DTOs;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using AutoMapper;
 
@@ -11,7 +11,6 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
             CreateMap<CreateProductCommand, Product>();
             CreateMap<Product, CreateProductResult>();
             CreateMap<RatingDto, Rating>();
-            CreateMap<Rating, RatingResult>();
         }
     }
 }

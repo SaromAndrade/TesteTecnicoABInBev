@@ -24,11 +24,14 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <returns>The product with the specified ID, or null if not found.</returns>
         Task<Product> GetByIdAsync(string id, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves all products from the database.
+        /// Retrieves a paginated list of products from the database.
         /// </summary>
+        /// <param name="page">The page number (default is 1).</param>
+        /// <param name="size">The number of items per page (default is 10).</param>
+        /// <param name="order">Sorting order (optional).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>A list of all products.</returns>
-        Task<List<Product>> GetAllAsync(CancellationToken cancellationToken);
+        /// <returns>A paginated list of products.</returns>
+        Task<(List<Product> Products, int TotalItems)> GetAllAsync(int page, int size, string order, CancellationToken cancellationToken = default);
         /// <summary>
         /// Updates an existing product in the database.
         /// </summary>

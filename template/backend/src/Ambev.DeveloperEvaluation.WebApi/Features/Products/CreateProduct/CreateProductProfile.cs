@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+﻿using Ambev.DeveloperEvaluation.Application.DTOs;
+using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct
@@ -8,9 +9,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct
         public CreateProductProfile()
         {
             CreateMap<CreateProductRequest, CreateProductCommand>();
-            CreateMap<CreateProductResult, CreateProductResponse>();
             CreateMap<Rating, RatingDto>();
-            CreateMap<RatingResult, RatingResponse>();
+            CreateMap<RatingDto, RatingResponse>();
+            CreateMap<CreateProductResult, CreateProductResponse>();
         }
     }
 }
