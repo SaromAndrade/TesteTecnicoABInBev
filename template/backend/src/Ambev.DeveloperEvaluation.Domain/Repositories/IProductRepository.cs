@@ -22,7 +22,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="id">The ID of the product to retrieve.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The product with the specified ID, or null if not found.</returns>
-        Task<Product> GetByIdAsync(string id, CancellationToken cancellationToken);
+        Task<Product> GetByIdAsync(int id, CancellationToken cancellationToken);
         /// <summary>
         /// Retrieves a paginated list of products from the database.
         /// </summary>

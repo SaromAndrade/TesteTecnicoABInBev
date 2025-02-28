@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProduct
 {
-    internal class GetProductQueryValidator
+    public class GetProductQueryValidator : AbstractValidator<GetProductQuery>
     {
+        public GetProductQueryValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("The product Id must be a positive number.");
+        }
     }
 }

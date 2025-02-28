@@ -41,7 +41,7 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
         /// <param name="id">The ID of the product to retrieve.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The product with the specified ID, or null if not found.</returns>
-        public async Task<Product> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<Product> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _context.Products.FindAsync(new object[] { id }, cancellationToken);
         }

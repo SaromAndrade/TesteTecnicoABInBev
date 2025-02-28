@@ -1,10 +1,13 @@
 ﻿using Ambev.DeveloperEvaluation.Application.DTOs;
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
@@ -71,6 +74,31 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
                 TotalPages = pagedList.TotalPages,
                 TotalCount = pagedList.TotalCount,
                 Success = true
+            });
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetProduct([FromRoute] int id, CancellationToken cancellationToken)
+        {
+            var validator = new GetProductQueryValidator();
+            var validationResult = await validator.ValidateAsync(new GetProductQuery { Id = id }, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var query = new GetProductQuery { Id = id };
+
+            var result = await _mediator.Send(query, cancellationToken);
+            var response = _mapper.Map<GetProductResponse>(result);
+
+            // Retorna os dados paginados
+            return Created(string.Empty, new ApiResponseWithData<GetProductResponse>
+            {
+                Success = true,
+                Message = "User created successfully",
+                Data = response
             });
         }
     }

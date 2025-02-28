@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProduct
 {
-    internal class GetProductProfile
+    public class GetProductProfile : Profile
     {
+        public GetProductProfile()
+        {
+            CreateMap<Product, GetProductResult>();
+        }
     }
 }
