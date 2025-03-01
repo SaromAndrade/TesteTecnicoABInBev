@@ -7,9 +7,6 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale
     {
         public UpdateSaleRequestValidator()
         {
-            RuleFor(command => command.SaleNumber)
-                   .GreaterThan(0).WithMessage("SaleNumber must be greater than zero.");
-
             RuleFor(command => command.CustomerId)
                 .NotEmpty().WithMessage("CustomerId is required.");
 

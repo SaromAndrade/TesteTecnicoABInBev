@@ -11,7 +11,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
         {
             _productRepository = productRepository;
 
-            RuleFor(command => command.SaleNumber)
+            RuleFor(command => command.Id)
                     .GreaterThan(0).WithMessage("SaleNumber must be greater than zero.");
 
             RuleFor(command => command.CustomerId)

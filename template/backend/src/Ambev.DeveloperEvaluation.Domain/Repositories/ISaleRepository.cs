@@ -46,5 +46,9 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
+
+        Task<bool> CancelSaleAsync(int id, CancellationToken cancellationToken);
+
+        Task<(List<Sale> Sales, int TotalItems)> GetByCustomerAsync(string customerId, int page, int size, string order, CancellationToken cancellationToken);
     }
 }
