@@ -6,12 +6,12 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
 {
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, UpdateProductResult>
+    public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, UpdateProductResult>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public UpdateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;

@@ -7,12 +7,12 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetProduct
 {
-    public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductResult>
+    public class GetProductHandler : IRequestHandler<GetProductQuery, GetProductResult>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public GetProductQueryHandler(IProductRepository productRepository, IMapper mapper)
+        public GetProductHandler(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;

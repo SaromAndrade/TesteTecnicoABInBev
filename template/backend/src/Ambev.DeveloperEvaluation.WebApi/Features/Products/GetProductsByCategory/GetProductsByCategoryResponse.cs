@@ -5,5 +5,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProductsByCatego
     public class GetProductsByCategoryResponse
     {
         public List<ProductDto> Data { get; set; }
+        public int TotalItems { get; set; }
+
     }
 }

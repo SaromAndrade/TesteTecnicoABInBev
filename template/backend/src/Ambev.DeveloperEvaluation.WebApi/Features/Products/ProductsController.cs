@@ -65,7 +65,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             var result = await _mediator.Send(query, cancellationToken);
             var response = _mapper.Map<GetAllProductResponse>(result);
 
-            var pagedList = new PaginatedList<ProductDto>(response.Data, response.Data.Count, page, size);
+            var pagedList = new PaginatedList<ProductDto>(response.Data, response.TotalItems, page, size);
 
             return OkPaginated<ProductDto>(pagedList);
         }
@@ -159,7 +159,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products
             var result = await _mediator.Send(query, cancellationToken);
             var response = _mapper.Map<GetProductsByCategoryResponse>(result);
 
-            var pagedList = new PaginatedList<ProductDto>(response.Data, response.Data.Count, page, size);
+            var pagedList = new PaginatedList<ProductDto>(response.Data, response.TotalItems, page, size);
 
             return OkPaginated<ProductDto>(pagedList);
         }

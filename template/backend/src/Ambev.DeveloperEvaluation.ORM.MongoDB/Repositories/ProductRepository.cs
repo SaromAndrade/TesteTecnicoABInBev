@@ -213,6 +213,10 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
                 .Distinct()
                 .ToListAsync(cancellationToken);
         }
+        public async Task<bool> ExistsAsync(int productId, CancellationToken cancellationToken)
+        {
+            return await _context.Products.AnyAsync(p => p.Id == productId, cancellationToken);
+        }
         private async Task<int> GetNextSequenceValueAsync(string sequenceName, CancellationToken cancellationToken)
         {
             var counterCollection = _context.GetCounterCollection();

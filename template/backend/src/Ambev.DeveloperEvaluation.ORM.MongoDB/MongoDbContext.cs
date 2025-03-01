@@ -23,8 +23,10 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Product>().ToCollection("products");
             modelBuilder.Entity<Counter>().ToCollection("counters");
+            modelBuilder.Entity<Sale>().ToCollection("sales");
         }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Sale> Sales { get; set; }
         public DbSet<Counter> Counters { get; set; }
         public IMongoCollection<Counter> GetCounterCollection() => _database.GetCollection<Counter>("counters");
     }

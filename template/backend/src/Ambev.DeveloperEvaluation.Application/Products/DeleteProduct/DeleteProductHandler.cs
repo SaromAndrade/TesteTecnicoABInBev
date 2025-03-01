@@ -5,11 +5,11 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.DeleteProduct
 {
-    public class DeleteProductQueryHandler : IRequestHandler<DeleteProductCommand, string>
+    public class DeleteProductHandler : IRequestHandler<DeleteProductCommand, string>
     {
         private readonly IProductRepository _productRepository;
 
-        public DeleteProductQueryHandler(IProductRepository productRepository)
+        public DeleteProductHandler(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }

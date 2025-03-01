@@ -60,5 +60,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A list of distinct product categories.</returns>
         Task<List<string>> GetAllCategoriesAsync(CancellationToken cancellationToken);
+        Task<bool> ExistsAsync(int productId, CancellationToken cancellationToken);
     }
 }

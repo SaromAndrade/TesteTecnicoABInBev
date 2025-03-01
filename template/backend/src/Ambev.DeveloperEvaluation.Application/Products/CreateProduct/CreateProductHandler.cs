@@ -10,12 +10,12 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
     /// <summary>
     /// Handler for the <see cref="CreateProductCommand"/>.
     /// </summary>
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductResult>
+    public class CreateProductHandler : IRequestHandler<CreateProductCommand, CreateProductResult>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        public CreateProductHandler(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;

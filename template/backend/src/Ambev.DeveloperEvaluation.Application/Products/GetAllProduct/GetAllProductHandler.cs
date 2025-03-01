@@ -6,12 +6,12 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.GetAllProduct
 {
-    public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQuery, GetAllProductResult>
+    public class GetAllProductHandler : IRequestHandler<GetAllProductQuery, GetAllProductResult>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public GetAllProductQueryHandler(IProductRepository productRepository, IMapper mapper)
+        public GetAllProductHandler(IProductRepository productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
