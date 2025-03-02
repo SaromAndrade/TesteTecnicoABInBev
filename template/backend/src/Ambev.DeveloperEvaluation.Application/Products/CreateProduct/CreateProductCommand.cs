@@ -37,6 +37,6 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
         /// <summary>
         /// Rating of the product.
         /// </summary>
-        public RatingDto Rating { get; set; }
+        public RatingDto Rating { get; set; } = new RatingDto();
     }
 }

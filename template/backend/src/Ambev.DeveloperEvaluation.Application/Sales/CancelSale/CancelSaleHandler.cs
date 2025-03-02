@@ -27,7 +27,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale
             if (!result)
             {
                 throw new KeyNotFoundException("Sale not found");
-            }
+            } 
             return "Sale canceled successfully";
         }
     }
