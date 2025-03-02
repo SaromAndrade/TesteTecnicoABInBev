@@ -1,5 +1,5 @@
-# Ambev Developer Evaluation - Running with Docker Compose
-This project is a web API application developed for developer evaluation at Ambev. It uses a set of Docker containerized services to provide a complete development environment, including a PostgreSQL database, a MongoDB database, a Redis cache, and a web interface for MongoDB management (Mongo Express).
+# ABINBEV Developer Evaluation - Running with Docker Compose
+This project is a web API application developed for developer evaluation. It uses a set of Docker containerized services to provide a complete development environment, including a PostgreSQL database, a MongoDB database, and a web interface for MongoDB management (Mongo Express).
 
 ## Prerequisites
 Make sure you have the following installed on your system:
@@ -15,8 +15,13 @@ git clone <repository_url>
 cd <repository_folder>
 ```
 
-### 2. Start the Containers
-Run the following command in the project root directory:
+### 2. Navigate to the Docker Compose Directory
+```sh
+cd abi-gth-omnia-developer-evaluation/template/backend
+```
+
+### 3. Start the Containers
+Run the following command in the `backend` directory:
 ```sh
 docker-compose up -d --build
 ```
@@ -27,17 +32,17 @@ This will:
 - Start a Redis cache (`ambev.developerevaluation.cache`).
 - Start `mongo-express` for MongoDB management.
 
-### 3. Verify Running Containers
+### 4. Verify Running Containers
 To check if all containers are running:
 ```sh
 docker ps
 ```
 
-### 4. Access the Application
+### 5. Access the Application
 - **API Service:** http://localhost:8080
 - **Mongo Express UI:** http://localhost:8085
 
-### 5. Stop the Containers
+### 6. Stop the Containers
 To stop the running services:
 ```sh
 docker-compose down
@@ -69,6 +74,11 @@ All services are connected through the `backend` network using a bridge driver.
   ```
 
 If you encounter any issues, make sure that ports `8080`, `8081`, `8085`, `5423`, `27017`, and `6379` are not in use by other applications.
+
+## License
+This project is licensed under [MIT License](LICENSE).
+
+
 
 ## Postman Collection
 
