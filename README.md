@@ -1,86 +1,75 @@
-# Developer Evaluation Project
+# Ambev Developer Evaluation - Running with Docker Compose
+This project is a web API application developed for developer evaluation at Ambev. It uses a set of Docker containerized services to provide a complete development environment, including a PostgreSQL database, a MongoDB database, a Redis cache, and a web interface for MongoDB management (Mongo Express).
 
-`READ CAREFULLY`
+## Prerequisites
+Make sure you have the following installed on your system:
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-## Instructions
-**The test below will have up to 7 calendar days to be delivered from the date of receipt of this manual.**
+## How to Run the Project
+Follow these steps to set up and run the project using Docker Compose:
 
-- The code must be versioned in a public Github repository and a link must be sent for evaluation once completed
-- Upload this template to your repository and start working from it
-- Read the instructions carefully and make sure all requirements are being addressed
-- The repository must provide instructions on how to configure, execute and test the project
-- Documentation and overall organization will also be taken into consideration
+### 1. Clone the Repository
+```sh
+git clone <repository_url>
+cd <repository_folder>
+```
 
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
+### 2. Start the Containers
+Run the following command in the project root directory:
+```sh
+docker-compose up -d --build
+```
+This will:
+- Build and start the `ambev.developerevaluation.webapi` service.
+- Start a PostgreSQL database (`ambev.developerevaluation.database`).
+- Start a MongoDB NoSQL database (`ambev.developerevaluation.nosql`).
+- Start a Redis cache (`ambev.developerevaluation.cache`).
+- Start `mongo-express` for MongoDB management.
 
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
+### 3. Verify Running Containers
+To check if all containers are running:
+```sh
+docker ps
+```
 
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
+### 4. Access the Application
+- **API Service:** http://localhost:8080
+- **Mongo Express UI:** http://localhost:8085
 
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
+### 5. Stop the Containers
+To stop the running services:
+```sh
+docker-compose down
+```
 
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
+## Configuration Details
 
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
+### Environment Variables
+The following environment variables are configured within `docker-compose.yml`:
+- **PostgreSQL Connection:** `ConnectionStrings__DefaultConnection=Host=ambev.developerevaluation.database;Port=5432;Database=developer_evaluation;Username=developer;Password=ev@luAt10n`
+- **MongoDB Connection:** `ConnectionStrings__MongoDb=mongodb://developer:MongoDB2025@ambev.developerevaluation.nosql:27017/admin`
+- **Redis Password:** `ev@luAt10n`
 
-### Business Rules
+### Network Configuration
+All services are connected through the `backend` network using a bridge driver.
 
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
+## Troubleshooting
+- **Check logs of a specific service:**
+  ```sh
+  docker logs -f <container_name>
+  ```
+- **Restart a specific container:**
+  ```sh
+  docker restart <container_name>
+  ```
+- **Remove all stopped containers:**
+  ```sh
+  docker system prune -f
+  ```
 
-These business rules define quantity-based discounting tiers and limitations:
+If you encounter any issues, make sure that ports `8080`, `8081`, `8085`, `5423`, `27017`, and `6379` are not in use by other applications.
 
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
+## License
+This project is licensed under [MIT License](LICENSE).
 
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
-
-## Overview
-This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
-
-See [Overview](/.doc/overview.md)
-
-## Tech Stack
-This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
-
-See [Tech Stack](/.doc/tech-stack.md)
-
-## Frameworks
-This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
-
-See [Frameworks](/.doc/frameworks.md)
-
-<!-- 
-## API Structure
-This section includes links to the detailed documentation for the different API resources:
-- [API General](./docs/general-api.md)
-- [Products API](/.doc/products-api.md)
-- [Carts API](/.doc/carts-api.md)
-- [Users API](/.doc/users-api.md)
-- [Auth API](/.doc/auth-api.md)
--->
-
-## Project Structure
-This section describes the overall structure and organization of the project files and directories. 
-
-See [Project Structure](/.doc/project-structure.md)
