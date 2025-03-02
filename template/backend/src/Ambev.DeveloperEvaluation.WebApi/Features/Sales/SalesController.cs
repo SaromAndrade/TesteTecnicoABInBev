@@ -19,6 +19,8 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSalesByCustomer;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSalesByCustomer;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSalesByDateRange;
+using Ambev.DeveloperEvaluation.Application.Sales.GetSalesByDateRange;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 {
@@ -168,6 +170,26 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var query = _mapper.Map<GetSalesByCustomerQuery>(request);
             var result = await _mediator.Send(query, cancellationToken);
             var response = _mapper.Map<GetSalesByCustomerResponse>(result);
+
+            var pagedList = new PaginatedList<Sale>(response.Sales, response.TotalItems, request.Page, request.Size);
+
+            return OkPaginated<Sale>(pagedList);
+        }
+        [HttpGet("daterange")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetSalesByDateRangeResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetByDateRange([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int page, [FromQuery] int size, [FromQuery] string order,  CancellationToken cancellationToken)
+        {
+            var request = new GetSalesByDateRangeRequest() { StartDate = startDate, EndDate = endDate, Size = size, Order = order, Page = page };
+            var validator = new GetSalesByDateRangeRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var query = _mapper.Map<GetSalesByDateRangeQuery>(request);
+            var result = await _mediator.Send(query, cancellationToken);
+            var response = _mapper.Map<GetSalesByDateRangeResponse>(result);
 
             var pagedList = new PaginatedList<Sale>(response.Sales, response.TotalItems, request.Page, request.Size);
 

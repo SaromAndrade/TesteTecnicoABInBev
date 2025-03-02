@@ -6,6 +6,7 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.ORM.MongoDB;
+using Ambev.DeveloperEvaluation.ORM.MongoDB.Seeders;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace Ambev.DeveloperEvaluation.WebApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
@@ -93,6 +94,20 @@ public class Program
             app.UseBasicHealthChecks();
 
             app.MapControllers();
+            
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<MongoDbContext>();
+                try
+                {
+                    await DatabaseSeeder.SeedAsync(context);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "An error occurred while seeding the database.");
+                }
+            }
 
             app.Run();
         }

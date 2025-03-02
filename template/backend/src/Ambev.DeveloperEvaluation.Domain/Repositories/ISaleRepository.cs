@@ -50,5 +50,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<bool> CancelSaleAsync(int id, CancellationToken cancellationToken);
 
         Task<(List<Sale> Sales, int TotalItems)> GetByCustomerAsync(string customerId, int page, int size, string order, CancellationToken cancellationToken);
+
+        Task<(List<Sale> Sales, int TotalItems)> GetByDateRangeAsync(DateTime startDate, DateTime endDate, int page, int size, string order, CancellationToken cancellationToken);
     }
 }

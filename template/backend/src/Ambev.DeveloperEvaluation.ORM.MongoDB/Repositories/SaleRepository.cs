@@ -165,6 +165,20 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
 
             return (sales, totalItems);
         }
+        public async Task<(List<Sale> Sales, int TotalItems)> GetByDateRangeAsync(DateTime startDate, DateTime endDate, int page, int size, string order, CancellationToken cancellationToken)
+        {
+            var query = _context.Sales.Where(s => s.Date >= startDate && s.Date <= endDate).AsQueryable();
+            query = Order(order, query);
+
+            int totalItems = await query.CountAsync(cancellationToken);
+
+            var sales = await query
+               .Skip((page - 1) * size)
+               .Take(size)
+               .ToListAsync(cancellationToken);
+
+            return (sales, totalItems);
+        }
 
         private IQueryable<Sale> Order(string order, IQueryable<Sale> query)
         {
@@ -217,6 +231,7 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
             var counterCollection = _context.GetCounterCollection();
 
             var filter = Builders<Counter>.Filter.Eq(c => c.Id, sequenceName);
+
             var update = Builders<Counter>.Update.Inc(c => c.SequenceValue, 1);
 
             var options = new FindOneAndUpdateOptions<Counter>
@@ -226,6 +241,7 @@ namespace Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories
             };
 
             var counter = await counterCollection.FindOneAndUpdateAsync(filter, update, options, cancellationToken);
+
             return counter.SequenceValue;
         }
     }
