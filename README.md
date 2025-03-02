@@ -70,6 +70,16 @@ All services are connected through the `backend` network using a bridge driver.
 
 If you encounter any issues, make sure that ports `8080`, `8081`, `8085`, `5423`, `27017`, and `6379` are not in use by other applications.
 
+## Postman Collection
+
+This project includes a Postman collection to help you test the API endpoints. You can find the collection and environment files in the `postman/` directory.
+
+### Importing the Collection
+1. Open Postman.
+2. Click on **Import** in the top-left corner.
+3. Select the `testeABInBev.postman_collection.json` file from the root directory.
+4. Start testing the API endpoints!
+
 ## License
 This project is licensed under [MIT License](LICENSE).
 
